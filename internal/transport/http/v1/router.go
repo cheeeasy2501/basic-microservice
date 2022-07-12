@@ -31,7 +31,6 @@ func NewRouter(r *gin.Engine) {
 	// Routers
 	h := r.Group("api/v1")
 	{
-		//newTranslationRoutes(h, t, l)
 		newBookRoutes(h)
 	}
 }

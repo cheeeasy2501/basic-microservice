@@ -9,13 +9,13 @@ import (
 func newBookRoutes(r *gin.RouterGroup) {
 	h := newBookHandler()
 
-	r.Group("/books")
+	g := r.Group("/books")
 	{
-		r.GET("/", h.GetBooks)
-		r.GET("/:id", h.GetBook)
-		r.POST("/", h.CreateBook)
-		r.PATCH("/", h.UpdateBook)
-		r.DELETE("/", h.DeleteBook)
+		g.GET("/", h.GetBooks)
+		g.GET("/:id", h.GetBook)
+		g.POST("/", h.CreateBook)
+		g.PATCH("/", h.UpdateBook)
+		g.DELETE("/", h.DeleteBook)
 	}
 }
 
@@ -36,10 +36,10 @@ func (r *BookHandler) GetBook(ctx *gin.Context) {
 
 // return entity.Book ???
 func (r *BookHandler) CreateBook(ctx *gin.Context) {
-	f := form.CreateBookForm{}
-	err := ctx.BindJSON(f)
+	f := &form.CreateBookForm{}
+	err := ctx.ShouldBindJSON(f)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, nil) /// method to gin response
+		ctx.JSON(http.StatusInternalServerError, err) /// method to gin response
 		return
 	}
 

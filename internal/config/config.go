@@ -2,7 +2,6 @@ package config
 
 import (
 	"basic-microservice/pkg/httpserver"
-	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
@@ -34,12 +33,13 @@ type (
 )
 
 func NewConfig() (*Config, error) {
+	var err error
 	cfg := &Config{}
 
-	err := cleanenv.ReadConfig("./config/config.yml", cfg)
-	if err != nil {
-		return nil, fmt.Errorf("config error: %w", err)
-	}
+	//err = cleanenv.ReadConfig("config.yml", cfg)// todo: check path
+	//if err != nil {
+	//	return nil, fmt.Errorf("config error: %w", err)
+	//}
 
 	err = cleanenv.ReadEnv(cfg)
 	if err != nil {

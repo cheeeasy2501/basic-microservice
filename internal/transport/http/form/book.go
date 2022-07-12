@@ -14,10 +14,10 @@ func (f *CreateBookForm) LoadAndValidate() *ErrorResponse {
 	}
 
 	if len(f.Title) < 5 {
-		errRes.AddError("title", errors.New("title must be > 5 "))
+		errRes.AddError("title", errors.New("title must be > 5"))
 	}
 
-	if len(errRes.errs) > 0 {
+	if len(errRes.Errs) > 0 {
 		return errRes
 	}
 

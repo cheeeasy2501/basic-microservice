@@ -4,26 +4,29 @@ type IForm interface {
 	LoadAndValidate() []error
 }
 
-type ValidationError []error
+type ValidationError string
+
+func (e ValidationError) Error() string {
+	return string(e)
+}
+
+//type ValidationErrors []error // todo: not return text in response
+type ValidationErrors []ValidationError
 
 type ErrorResponse struct {
-	message string
-	errs    map[string]ValidationError
+	Message string                      `json:"message"`
+	Errs    map[string]ValidationErrors `json:"errors"`
 }
 
 func (r *ErrorResponse) AddError(fieldName string, err error) {
-	if _, ok := r.errs[fieldName]; ok == false {
-		r.errs[fieldName] = append(r.errs[fieldName], err)
-		return
-	}
-
-	//r.errs[fieldName] = []
+	r.Errs[fieldName] = append(r.Errs[fieldName], ValidationError(err.Error()))
+	return
 }
 
 func newFormErrorResponse() *ErrorResponse {
 	return &ErrorResponse{
-		message: "Validation error",
-		errs:    make(map[string]ValidationError, 0),
+		Message: "Validation error",
+		Errs:    make(map[string]ValidationErrors, 0),
 	}
 }
 
