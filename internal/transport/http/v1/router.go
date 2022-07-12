@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"gorm.io/gorm/logger"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
@@ -12,24 +12,26 @@ import (
 // @version     1.0
 // @host        localhost:8080
 // @BasePath    /v1
-func NewRouter(handler *gin.Engine, l logger.Interface, t usecase.Translation) {
+//func NewRouter(r *gin.Engine, l logger.Interface) {
+func NewRouter(r *gin.Engine) {
 	// Options
-	handler.Use(gin.Logger())
-	handler.Use(gin.Recovery())
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 
 	// Swagger
-	swaggerHandler := ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER_HTTP_HANDLER")
-	handler.GET("/swagger/*any", swaggerHandler)
+	//swaggerHandler := ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER_HTTP_HANDLER")
+	//handler.GET("/swagger/*any", swaggerHandler)
 
 	// K8s probe
-	handler.GET("/healthz", func(c *gin.Context) { c.Status(http.StatusOK) })
+	r.GET("/healthz", func(c *gin.Context) { c.Status(http.StatusOK) })
 
 	// Prometheus metrics
-	handler.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	//r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// Routers
-	h := handler.Group("/v1")
+	h := r.Group("api/v1")
 	{
-		newTranslationRoutes(h, t, l)
+		//newTranslationRoutes(h, t, l)
+		newBookRoutes(h)
 	}
 }
