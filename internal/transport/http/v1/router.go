@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"basic-microservice/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,7 +14,7 @@ import (
 // @host        localhost:8080
 // @BasePath    /v1
 //func NewRouter(r *gin.Engine, l logger.Interface) {
-func NewRouter(r *gin.Engine) {
+func NewRouter(r *gin.Engine, svs *service.Services) {
 	// Options
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -31,6 +32,6 @@ func NewRouter(r *gin.Engine) {
 	// Routers
 	h := r.Group("api/v1")
 	{
-		newBookRoutes(h)
+		newBookRoutes(h, svs.BookService)
 	}
 }

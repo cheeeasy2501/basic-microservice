@@ -3,11 +3,11 @@ package repository
 import "gorm.io/gorm"
 
 type Repositories struct {
-	bookRepo IBookRepository
+	BookRepo IBookRepository
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {
 	return &Repositories{
-		bookRepo: newBookRepository(db),
+		BookRepo: newBookRepository(db),
 	}
 }

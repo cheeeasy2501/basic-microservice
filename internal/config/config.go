@@ -1,24 +1,20 @@
 package config
 
 import (
-	"basic-microservice/pkg/httpserver"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type (
 	Config struct {
-		App
-		Log
-		PG
+		App App
+		Log Log
+		PG  PG
 	}
 	// App -.
 	App struct {
 		Name    string `env-required:"true" yaml:"name"    env:"APP_NAME"`
 		Version string `env-required:"true" yaml:"version" env:"APP_VERSION"`
 	}
-
-	// HTTP -.
-	HTTP httpserver.HttpServerConfig
 
 	// Log -.
 	Log struct {

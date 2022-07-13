@@ -2,38 +2,38 @@ package httpserver
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 )
 
 const (
-	_defaultReadTimeout  = 5 * time.Second
-	_defaultWriteTimeout = 5 * time.Second
-	_defaultAddr         = ":80"
-	//_defaultShutdownTimeout = 3 * time.Second
+	_defaultShutdownTimeout = 3 * time.Second
 )
 
 type IHttpServer interface {
-	Start()
-	ConfiguringServer(config *HttpServerConfig)
-	Stop()
+	start()
+	Notify() <-chan error
+	Shutdown() error
 }
 
 type HttpServer struct {
-	srv *http.Server
+	srv             *http.Server
+	notify          chan error
+	shutdownTimeout time.Duration
 }
 
-func NewHttpServer(handler http.Handler) *HttpServer {
+func NewHttpServer(handler http.Handler, cfg *HttpServerConfig) *HttpServer {
 	httpServer := &http.Server{
 		Handler:      handler,
-		ReadTimeout:  _defaultReadTimeout,
-		WriteTimeout: _defaultWriteTimeout,
-		Addr:         _defaultAddr,
+		ReadTimeout:  time.Duration(cfg.ReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
+		Addr:         cfg.GetAddr(),
 	}
 
 	s := &HttpServer{
-		srv: httpServer,
+		srv:             httpServer,
+		notify:          make(chan error, 1),
+		shutdownTimeout: _defaultShutdownTimeout,
 	}
 
 	s.start()
@@ -43,28 +43,46 @@ func NewHttpServer(handler http.Handler) *HttpServer {
 
 func (s *HttpServer) start() {
 	go func() {
-		s.srv.ListenAndServe()
+		s.notify <- s.srv.ListenAndServe()
+		close(s.notify)
 	}()
 }
 
-// todo: check it
-func (s *HttpServer) configuringServer(config *HttpServerConfig) {
-	s.srv.Addr = fmt.Sprintf("%s:%s", config.Host, config.Port)
+func (s *HttpServer) Notify() <-chan error {
+	return s.notify
 }
 
-// todo: need more info about shutdown
-func (s *HttpServer) Stop() {
-	s.srv.Shutdown(context.Background())
-}
+func (s *HttpServer) Shutdown() error {
+	ctx, cancel := context.WithTimeout(context.Background(), s.shutdownTimeout)
+	defer cancel()
 
-type HttpErrorResponse struct {
-	Message          string
-	DeveloperMessage string
-	Code             uint8
+	return s.srv.Shutdown(ctx)
 }
 
 type HttpResponse struct {
-	Data interface{}
+	Message  string      `json:"message"`
+	AppError string      `json:"appError,omitempty"`
+	Data     interface{} `json:"data"`
+}
+
+func NewResponse(message string, data interface{}) *HttpResponse {
+	return &HttpResponse{
+		Message: message,
+		Data:    data,
+	}
+}
+
+func NewErrorResponse(message string, appErr error) *HttpResponse {
+	r := &HttpResponse{
+		Message: message,
+		Data:    nil,
+	}
+
+	if appErr != nil {
+		r.AppError = appErr.Error()
+	}
+
+	return r
 }
 
 /// a instance response

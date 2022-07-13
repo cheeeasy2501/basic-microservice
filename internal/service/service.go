@@ -1,11 +1,13 @@
 package service
 
+import repo "basic-microservice/internal/repository"
+
 type Services struct {
-	bookService IBookService
+	BookService IBookService
 }
 
-func NewServices() *Services {
+func NewServices(repos *repo.Repositories) *Services {
 	return &Services{
-		bookService: NewBookService(),
+		BookService: NewBookService(repos.BookRepo),
 	}
 }

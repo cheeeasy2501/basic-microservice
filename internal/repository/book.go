@@ -16,5 +16,5 @@ func newBookRepository(db *gorm.DB) *BookRepository {
 
 // return entity.Book
 func (r *BookRepository) CreateBook() {
-
+	// todo: create book and return id, created_at and updated_at fields
 }
