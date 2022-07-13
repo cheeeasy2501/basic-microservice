@@ -60,7 +60,7 @@ func (r *BookHandler) CreateBook(ctx *gin.Context) {
 		Title:       f.Title,
 		Description: f.Description,
 	} // mock
-	book, err = r.s.CreateBook(book)
+	book, err = r.s.CreateBook(ctx.Request.Context(), book)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, httpserver.NewErrorResponse("Book isn't created", err))
 	}

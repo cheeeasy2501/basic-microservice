@@ -1,9 +1,14 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"basic-microservice/internal/entity"
+	"context"
+	"gorm.io/gorm"
+	"time"
+)
 
 type IBookRepository interface {
-	CreateBook()
+	CreateBook(ctx context.Context, book entity.BookEntity) (entity.BookEntity, error)
 }
 
 type BookRepository struct {
@@ -15,6 +20,8 @@ func newBookRepository(db *gorm.DB) *BookRepository {
 }
 
 // return entity.Book
-func (r *BookRepository) CreateBook() {
+func (r *BookRepository) CreateBook(ctx context.Context, book entity.BookEntity) (entity.BookEntity, error) {
 	// todo: create book and return id, created_at and updated_at fields
+	book.Id, book.CreatedAt, book.UpdatedAt = 1, time.Now(), time.Now()
+	return book, nil
 }
