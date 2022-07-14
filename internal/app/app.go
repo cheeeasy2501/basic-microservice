@@ -5,28 +5,41 @@ import (
 	"basic-microservice/internal/repository"
 	"basic-microservice/internal/service"
 	v1 "basic-microservice/internal/transport/http/v1"
+	"basic-microservice/pkg/database"
 	"basic-microservice/pkg/httpserver"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
-type App struct {
-}
-
-// Run func (a *App) Run(cfg *config.Config) {
 func Run(cfg *config.Config, l *logrus.Logger) {
 	l.Info("app - Run - Run app")
 
 	// Configure gorm DB
-	db := &gorm.DB{} // mock
+	gormCfg, err := database.NewConfig()
+	if err != nil {
+		l.Errorf("app - Run - Bad database config: %w", err)
+		return
+	}
+	db, err := database.NewDatabase(gormCfg)
+	if err != nil {
+		l.Errorf("app - Run - Bad database instance: %w", err)
+		return
+	}
+
+	err = db.Open()
+	if err != nil {
+		l.Errorf("app - Run - Database connection is not open: %w", err)
+		return
+	}
+
 	// Configure repos and services
 	repos := repository.NewRepositories(db)
 	svs := service.NewServices(repos)
+
 	// Configure router
 	h := gin.New()
 	v1.NewRouter(h, svs)
@@ -34,7 +47,8 @@ func Run(cfg *config.Config, l *logrus.Logger) {
 	// Start http server
 	httpCfg, err := httpserver.NewConfig()
 	if err != nil {
-		fmt.Println("app - Run - Bad httpServer config")
+		l.Errorf("app - Run - Bad httpServer config: %w", err)
+		return
 	}
 
 	httpServer := httpserver.NewHttpServer(h, httpCfg)
@@ -53,7 +67,12 @@ func Run(cfg *config.Config, l *logrus.Logger) {
 	// Shutdown
 	err = httpServer.Shutdown()
 	if err != nil {
-		l.Error(fmt.Errorf("app - Run - httpServer.Shutdown: %w", err))
+		l.Errorf("app - Run - httpServer.Shutdown: %w", err)
+	}
+
+	err = db.Close()
+	if err != nil {
+		l.Errorf("app - Run - database.Close: %w", err)
 	}
 
 	l.Info("app - Run - is stopped")

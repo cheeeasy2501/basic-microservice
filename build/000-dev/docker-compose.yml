@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:14.4
+    container_name: bookshelf-postgres
+    env_file:
+      - ../../.env.example
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - bookshelf
+  prometheus:
+    image: prom/prometheus
+    container_name: bookshelf-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - bookshelf
+  grafana:
+    image: grafana/grafana-enterprise:8.5.2
+    container_name: bookshelf-grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - bookshelf
+networks:
+  bookshelf:
+    driver: bridge

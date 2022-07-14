@@ -10,7 +10,6 @@ func (e ValidationError) Error() string {
 	return string(e)
 }
 
-//type ValidationErrors []error // todo: not return text in response
 type ValidationErrors []ValidationError
 
 type ErrorResponse struct {

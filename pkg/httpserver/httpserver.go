@@ -74,8 +74,9 @@ func NewResponse(message string, data interface{}) *HttpResponse {
 
 func NewErrorResponse(message string, appErr error) *HttpResponse {
 	r := &HttpResponse{
-		Message: message,
-		Data:    nil,
+		Message:  message,
+		AppError: appErr.Error(),
+		Data:     nil,
 	}
 
 	if appErr != nil {

@@ -2,8 +2,8 @@ package repository
 
 import (
 	"basic-microservice/internal/entity"
+	"basic-microservice/pkg/database"
 	"context"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -12,10 +12,10 @@ type IBookRepository interface {
 }
 
 type BookRepository struct {
-	db *gorm.DB
+	db *database.Database
 }
 
-func newBookRepository(db *gorm.DB) *BookRepository {
+func newBookRepository(db *database.Database) *BookRepository {
 	return &BookRepository{db: db}
 }
 
