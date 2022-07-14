@@ -3,6 +3,7 @@ package v1
 import (
 	"basic-microservice/internal/service"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 )
 
@@ -27,7 +28,7 @@ func NewRouter(r *gin.Engine, svs *service.Services) {
 	r.GET("/healthz", func(c *gin.Context) { c.Status(http.StatusOK) })
 
 	// Prometheus metrics
-	//r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// Routers
 	h := r.Group("api/v1")
