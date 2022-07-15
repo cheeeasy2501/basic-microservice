@@ -5,11 +5,13 @@ import (
 )
 
 type Repositories struct {
-	BookRepo IBookRepository
+	BookRepo   IBookRepository
+	AuthorRepo IAuthorRepository
 }
 
 func NewRepositories(db *database.Database) *Repositories {
 	return &Repositories{
-		BookRepo: newBookRepository(db),
+		BookRepo:   newBookRepository(db),
+		AuthorRepo: newAuthorRepository(db),
 	}
 }

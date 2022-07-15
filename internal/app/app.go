@@ -33,7 +33,7 @@ func Run(cfg *config.Config, l *logrus.Logger) {
 
 	// Configure repos and services
 	repos := repository.NewRepositories(db)
-	svs := service.NewServices(repos)
+	svs := service.NewServices(db, repos)
 
 	// Configure router
 	h := gin.New()

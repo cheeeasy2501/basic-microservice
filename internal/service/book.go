@@ -1,26 +1,31 @@
 package service
 
 import (
-	"basic-microservice/internal/entity"
+	"basic-microservice/internal/domain/aggregate"
 	repos "basic-microservice/internal/repository"
+	"basic-microservice/pkg/database"
 	"context"
 )
 
 type IBookService interface {
 	GetBooks()
 	GetBook()
-	CreateBook(ctx context.Context, ent entity.BookEntity) (entity.BookEntity, error)
+	CreateBook(ctx context.Context, ent aggregate.CreateBook) (aggregate.FullBook, error)
 	UpdateBook()
 	DeleteBook()
 }
 
 type BookService struct {
-	bookRepo repos.IBookRepository
+	db         *database.Database
+	bookRepo   repos.IBookRepository
+	authorRepo repos.IAuthorRepository
 }
 
-func NewBookService(bookRepo repos.IBookRepository) *BookService {
+func NewBookService(db *database.Database, bookRepo repos.IBookRepository, authorRepo repos.IAuthorRepository) *BookService {
 	return &BookService{
-		bookRepo: bookRepo,
+		db:         db,
+		bookRepo:   bookRepo,
+		authorRepo: authorRepo,
 	}
 }
 
@@ -33,12 +38,30 @@ func (s *BookService) GetBook() {
 
 }
 
-func (s *BookService) CreateBook(ctx context.Context, book entity.BookEntity) (entity.BookEntity, error) {
-	book, err := s.bookRepo.CreateBook(ctx, book) // todo: create book and return id's
+func (s *BookService) CreateBook(ctx context.Context, agg aggregate.CreateBook) (aggregate.FullBook, error) {
+	fullBook := aggregate.FullBook{}
+	ctx, f, err := s.db.Session(ctx)
 	if err != nil {
-		return book, err
+		return fullBook, err
 	}
-	return book, nil
+
+	defer func() {
+		f(err)
+	}()
+
+	book, err := s.bookRepo.CreateBook(ctx, agg.Book) // todo: create book and return id's
+	if err != nil {
+		return fullBook, err
+	}
+
+	authors, err := s.authorRepo.AssignBookByIds(ctx, agg.AuthorIds)
+	if err != nil {
+		return aggregate.FullBook{}, err
+	}
+	fullBook.BookEntity = book
+	fullBook.Authors = authors
+
+	return fullBook, nil
 }
 
 func (s *BookService) UpdateBook() {

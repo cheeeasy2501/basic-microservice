@@ -1,10 +1,18 @@
 package form
 
-import "errors"
+import (
+	"errors"
+)
 
 type CreateBookForm struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Isbn            string `json:"isbn"`
+	Status          string `json:"status"`
+	Title           string `json:"title"`
+	LanguageLevelId int    `json:"languageLevelId"`
+	Description     string `json:"description"`
+	Link            string `json:"link"`
+	CoverPath       string `json:"coverPath"`
+	AuthorIds       []int  `json:"authorIds"`
 }
 
 func (f *CreateBookForm) LoadAndValidate() *ErrorResponse {

@@ -1,7 +1,8 @@
 package v1
 
 import (
-	"basic-microservice/internal/entity"
+	"basic-microservice/internal/domain/aggregate"
+	"basic-microservice/internal/domain/entity"
 	"basic-microservice/internal/service"
 	"basic-microservice/internal/transport/http/form"
 	"basic-microservice/pkg/httpserver"
@@ -56,11 +57,19 @@ func (r *BookHandler) CreateBook(ctx *gin.Context) {
 	}
 
 	// todo: work with bookService and return entity or httpserver.Response
-	book := entity.BookEntity{
-		Title:       f.Title,
-		Description: f.Description,
+	createBook := aggregate.CreateBook{
+		Book: entity.BookEntity{
+			Isbn:            f.Isbn,
+			Status:          f.Status,
+			Title:           f.Title,
+			LanguageLevelId: f.LanguageLevelId,
+			Description:     f.Description,
+			Link:            f.Link,
+			CoverPath:       f.CoverPath,
+		},
+		AuthorIds: f.AuthorIds,
 	} // mock
-	book, err = r.s.CreateBook(ctx.Request.Context(), book)
+	book, err := r.s.CreateBook(ctx.Request.Context(), createBook)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, httpserver.NewErrorResponse("Book isn't created", err))
 	}

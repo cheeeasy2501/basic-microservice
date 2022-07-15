@@ -14,7 +14,7 @@ type DatabaseConfig struct {
 	Port     string `env:"DB_PORT" env-required:"true"`
 	SSLMode  string `env:"DB_SSL_MODE" env-default:"disable"`
 	// setting *gorm.DB
-	SkipDefaultTransaction bool `env:"DB_SKIP_DEFAULT_TRANSACTION" env-default:"true"`
+	SkipDefaultTransaction bool `env:"DB_SKIP_DEFAULT_TRANSACTION" env-default:"false"`
 	// setting sql.DB
 	SetMaxIdleConns    int `env:"DB_MAX_IDLE_CONNECTIONS" env-default:"3"`
 	SetMaxOpenConns    int `env:"DB_MAX_OPEN_CONNECTIONS" env-default:"10"`

@@ -1,10 +1,9 @@
 package repository
 
 import (
-	"basic-microservice/internal/entity"
+	"basic-microservice/internal/domain/entity"
 	"basic-microservice/pkg/database"
 	"context"
-	"time"
 )
 
 type IBookRepository interface {
@@ -22,6 +21,11 @@ func newBookRepository(db *database.Database) *BookRepository {
 // return entity.Book
 func (r *BookRepository) CreateBook(ctx context.Context, book entity.BookEntity) (entity.BookEntity, error) {
 	// todo: create book and return id, created_at and updated_at fields
-	book.Id, book.CreatedAt, book.UpdatedAt = 1, time.Now(), time.Now()
+	db := r.db.GetSession(ctx)
+	result := db.WithContext(ctx).Create(&book)
+	if err := result.Error; err != nil {
+		return entity.BookEntity{}, err
+	}
+
 	return book, nil
 }
