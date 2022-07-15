@@ -1,12 +1,16 @@
 package config
 
 import (
+	"basic-microservice/pkg/database"
+	"basic-microservice/pkg/httpserver"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type (
 	Config struct {
-		Log Log
+		Log  Log
+		Http httpserver.HttpServerConfig
+		DB   database.DatabaseConfig
 	}
 
 	// Log -.

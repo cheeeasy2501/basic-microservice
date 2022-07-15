@@ -19,12 +19,7 @@ func Run(cfg *config.Config, l *logrus.Logger) {
 	l.Info("app - Run - Run app")
 
 	// Configure gorm DB
-	gormCfg, err := database.NewConfig()
-	if err != nil {
-		l.Errorf("app - Run - Bad database config: %w", err)
-		return
-	}
-	db, err := database.NewDatabase(gormCfg)
+	db, err := database.NewDatabase(&cfg.DB)
 	if err != nil {
 		l.Errorf("app - Run - Bad database instance: %w", err)
 		return
@@ -45,13 +40,7 @@ func Run(cfg *config.Config, l *logrus.Logger) {
 	v1.NewRouter(h, svs)
 
 	// Start http server
-	httpCfg, err := httpserver.NewConfig()
-	if err != nil {
-		l.Errorf("app - Run - Bad httpServer config: %w", err)
-		return
-	}
-
-	httpServer := httpserver.NewHttpServer(h, httpCfg)
+	httpServer := httpserver.NewHttpServer(h, &cfg.Http)
 
 	// Waiting signal
 	interrupt := make(chan os.Signal, 1)
