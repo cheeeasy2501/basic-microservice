@@ -29,7 +29,6 @@ func NewBookService(db *database.Database, bookRepo repos.IBookRepository, autho
 	}
 }
 
-// return entity.Book
 func (s *BookService) GetBooks() {
 
 }
@@ -49,7 +48,7 @@ func (s *BookService) CreateBook(ctx context.Context, agg aggregate.CreateBook) 
 		f(err)
 	}()
 
-	book, err := s.bookRepo.CreateBook(ctx, agg.Book) // todo: create book and return id's
+	book, err := s.bookRepo.CreateBook(ctx, agg.Book)
 	if err != nil {
 		return fullBook, err
 	}
@@ -58,7 +57,7 @@ func (s *BookService) CreateBook(ctx context.Context, agg aggregate.CreateBook) 
 	if err != nil {
 		return aggregate.FullBook{}, err
 	}
-	fullBook.BookEntity = book
+	fullBook.Book = book
 	fullBook.Authors = authors
 
 	return fullBook, nil

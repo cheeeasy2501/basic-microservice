@@ -17,8 +17,8 @@ type ErrorResponse struct {
 	Errs    map[string]ValidationErrors `json:"errors"`
 }
 
-func (r *ErrorResponse) AddError(fieldName string, err error) {
-	r.Errs[fieldName] = append(r.Errs[fieldName], ValidationError(err.Error()))
+func (r *ErrorResponse) addError(fieldName string, err ValidationError) {
+	r.Errs[fieldName] = append(r.Errs[fieldName], err)
 	return
 }
 
@@ -28,18 +28,3 @@ func newFormErrorResponse() *ErrorResponse {
 		Errs:    make(map[string]ValidationErrors, 0),
 	}
 }
-
-/// Validation
-//{
-//	message: "Validation Error",
-//	errors: {
-//	password: [
-//		1: "Invalid password",
-//		2: "Please,  use @ letter"
-//	],
-//	login: [
-//		1: "abc",
-//		2: "def"
-//	],
-//	}
-//}

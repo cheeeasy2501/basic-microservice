@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type BookEntity struct {
+type Book struct {
 	Id              uint64         `json:"id" gorm:"primaryKey"`
 	Isbn            string         `json:"isbn"`
 	Status          string         `json:"status"`
@@ -19,6 +19,6 @@ type BookEntity struct {
 	deletedAt       gorm.DeletedAt `gorm:"index"`
 }
 
-func (b *BookEntity) TableName() string {
+func (b *Book) TableName() string {
 	return "books"
 }

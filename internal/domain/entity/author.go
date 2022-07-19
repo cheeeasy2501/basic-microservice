@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type AuthorEntity struct {
+type Author struct {
 	Id        uint64         `json:"id" gorm:"primaryKey"`
 	Title     string         `json:"title"`
 	CreatedAt time.Time      `json:"createdAt"`
@@ -13,6 +13,6 @@ type AuthorEntity struct {
 	deletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-func (b *AuthorEntity) TableName() string {
+func (b *Author) TableName() string {
 	return "authors"
 }

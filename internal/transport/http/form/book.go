@@ -1,7 +1,8 @@
 package form
 
-import (
-	"errors"
+const (
+	bookTitleNotEmpty = ValidationError("title is empty")
+	bookTitleLength   = ValidationError("title must be > 5")
 )
 
 type CreateBookForm struct {
@@ -18,11 +19,11 @@ type CreateBookForm struct {
 func (f *CreateBookForm) LoadAndValidate() *ErrorResponse {
 	errRes := newFormErrorResponse() // struct with errors
 	if f.Title == "" {
-		errRes.AddError("title", errors.New("title is empty")) // make errors like const
+		errRes.addError("title", bookTitleNotEmpty) // make errors like const
 	}
 
 	if len(f.Title) < 5 {
-		errRes.AddError("title", errors.New("title must be > 5"))
+		errRes.addError("title", bookTitleLength)
 	}
 
 	if len(errRes.Errs) > 0 {

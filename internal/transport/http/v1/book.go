@@ -41,7 +41,6 @@ func (r *BookHandler) GetBook(ctx *gin.Context) {
 
 }
 
-// return entity.Book ???
 func (r *BookHandler) CreateBook(ctx *gin.Context) {
 	f := &form.CreateBookForm{}
 	err := ctx.ShouldBindJSON(f)
@@ -56,9 +55,8 @@ func (r *BookHandler) CreateBook(ctx *gin.Context) {
 		return
 	}
 
-	// todo: work with bookService and return entity or httpserver.Response
 	createBook := aggregate.CreateBook{
-		Book: entity.BookEntity{
+		Book: entity.Book{
 			Isbn:            f.Isbn,
 			Status:          f.Status,
 			Title:           f.Title,
@@ -68,7 +66,7 @@ func (r *BookHandler) CreateBook(ctx *gin.Context) {
 			CoverPath:       f.CoverPath,
 		},
 		AuthorIds: f.AuthorIds,
-	} // mock
+	}
 	book, err := r.s.CreateBook(ctx.Request.Context(), createBook)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, httpserver.NewErrorResponse("Book isn't created", err))

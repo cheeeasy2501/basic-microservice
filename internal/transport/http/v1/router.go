@@ -12,9 +12,8 @@ import (
 // @title       Go Clean Template API
 // @description Using a translation service as an example
 // @version     1.0
-// @host        localhost:8080
-// @BasePath    /v1
-//func NewRouter(r *gin.Engine, l logger.Interface) {
+// @host        localhost:80
+// @BasePath    /api/v1
 func NewRouter(r *gin.Engine, svs *service.Services) {
 	// Options
 	r.Use(gin.Logger())
